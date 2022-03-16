@@ -1,23 +1,43 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Person from './Person';
+
 
 function App() {
+
+  const [people, setPeople] = useState([]);
+
+  function handleRemove(name) {
+    console.log('removeing', name)
+
+    const nextPeople = people.filter((person) => {
+      return person.name !== name;
+    })
+
+    setPeople(nextPeople)
+  }
+
+  useEffect(() => {
+    async function getPeople(){
+      const resp = await fetch('https://swapi.dev/api/people');
+      const data = await resp.json()
+
+      // console.log(data.results)
+
+      setPeople(data.results)
+    }
+
+    getPeople()
+
+  }, [])
+
+  console.log(people)
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {people.map(person => (
+      <Person name={person.name} hairColor={person.hair_color} onRemove={handleRemove} />
+      ))}
     </div>
   );
 }
