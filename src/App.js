@@ -1,41 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Person from './Person';
+import useFetch from './useFetch';
 
 
 function App() {
 
-  const [people, setPeople] = useState([]);
+  const [swloading, swData, setSwData] = useFetch('https://swapi.dev/api/people')
 
   function handleRemove(name) {
     console.log('removeing', name)
 
-    const nextPeople = people.filter((person) => {
+    const nextResults = swData.results.filter((person) => {
       return person.name !== name;
     })
 
-    setPeople(nextPeople)
-  }
-
-  useEffect(() => {
-    async function getPeople(){
-      const resp = await fetch('https://swapi.dev/api/people');
-      const data = await resp.json()
-
-      // console.log(data.results)
-
-      setPeople(data.results)
+    const nextPeople = {
+      ...swData,
+      results: nextResults
     }
 
-    getPeople()
+    setSwData(nextPeople)
+  }
 
-  }, [])
+  if(swloading) return "Loading... "
 
-  console.log(people)
+  // console.log(people)
 
   return (
     <div className="App">
-      {people.map(person => (
+      {swData?.results.map(person => (
       <Person name={person.name} hairColor={person.hair_color} onRemove={handleRemove} />
       ))}
     </div>
