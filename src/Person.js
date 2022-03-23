@@ -1,6 +1,12 @@
+import { useContext } from "react";
+import {Context} from './Context';
 
 
 function Person({name, hairColor, onRemove}) {
+
+  const value = useContext(Context)
+
+  console.log(value)
 
     return (
       <>
